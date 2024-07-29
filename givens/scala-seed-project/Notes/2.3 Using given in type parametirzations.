@@ -1,0 +1,82 @@
+import Printer.{printerln=>println,printer=>print}
+
+
+  // Does not compile.
+// def isort[T](xs: List[T]): List[T] =
+// 	if xs.isEmpty then Nil
+// 	else insert(xs.head, isort(xs.tail))
+// def insert[T](x: T, xs: List[T]): List[T] =
+// 	if xs.isEmpty || x <= xs.head then x :: xs
+// 	else xs.head :: insert(x, xs.tail)
+
+// this compiles because if we are using parametized types, we should not use something like <= because it doesnt know if the parameter type supports it so you have to make it a lambda type so that you can still compare those two but always remember to know what should be their return, just like in (T, T) => Boolean- we could use this using two same types and then return a boolean. 
+
+// it is important to give the type of the class so that the compiler wont check anymore what kind of type is in every index, for faster compilation
+
+
+// def isort[T](xs: List[T]) (lteq: (T, T) => Boolean): List[T] =
+// 	if xs.isEmpty then Nil
+// 	else insert(xs.head, isort(xs.tail)(lteq))(lteq)
+
+// def insert[T](x: T, xs: List[T]) (lteq: (T, T) => Boolean): List[T] =
+// 	if xs.isEmpty || lteq(x, xs.head) then x :: xs
+// 	else xs.head :: insert(x, xs.tail)(lteq)
+
+// @main def stsagarino=
+// 	//for int
+// 	println(isort(List(4,-10,10))((x,y)=>x<=y))
+// 	//for string
+// 	println(isort(List("cherry","blackberry","apple","pear"))((x:String,y:String)=>x.compareTo(y)<=0))
+
+
+trait Ord[T]:
+   def compare(x: T, y: T): Int
+   def lteq(x: T, y: T): Boolean = compare(x, y) < 1
+
+object Ord:
+	// This is idiomatic
+	// will return an Int ORD the data type is INT with an INT based compare
+
+	// its okay to not use any names, as long as you are referring the data term/type
+	given Ord[Int] with
+		def compare(x: Int, y: Int) =
+			if x == y then 0 else if x > y then 1 else -1
+
+	// will return an String ORD the data type is String with an String based compare
+	given strOrd: Ord[String] with
+		def compare(s: String, t: String) = s.compareTo(t)			
+		
+	//same as above		
+	given dblOrd: Ord[Double] with
+		def compare(x: Double, y: Double) =
+			if x == y then 0 else if x > y then 1 else -1
+def isort[T](xs: List[T])(using ord: Ord[T]): List[T] =
+	if xs.isEmpty then Nil
+	else insert(xs.head, isort(xs.tail))
+
+def insert[T](x: T, xs: List[T])(using ord: Ord[T]): List[T] =
+	if xs.isEmpty || ord.lteq(x, xs.head) then x :: xs
+	else xs.head :: insert(x, xs.tail)
+
+
+@main def stsagarino=
+	//for int
+	println(isort(List(4,-10,10)))
+
+	println(isort(List(12.0,324.0,90.0)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

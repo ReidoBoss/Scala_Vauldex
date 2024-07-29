@@ -1,0 +1,46 @@
+2.1 how it works 
+
+import Printer.{printerln=>println,printer=>print}
+
+
+class PreferredPrompt(val preference: String)
+class PreferredDrink(val preference: String)
+object Greeter:
+	def greet(name: String)(using prompt: PreferredPrompt, drink: PreferredDrink) =
+		println(s"Welcome, $name. The system is ready.")
+		print("But while you work, ")
+		println(s"why not enjoy a cup of ${drink.preference}?")
+		println(prompt.preference)
+
+object JoesPrefs:
+	given prompt: PreferredPrompt =
+	PreferredPrompt("relax> ")
+	given drink: PreferredDrink =
+	PreferredDrink("Pocari")
+
+
+
+@main def stsagarino=
+	given tester:PreferredPrompt = JoesPrefs.prompt
+	given tester2:PreferredDrink = JoesPrefs.drink
+	given tester3:PreferredPrompt = JoesPrefs.prompt
+	given tester4:PreferredDrink = JoesPrefs.drink
+	Greeter.greet("StephenTheGwapo!")(using tester3,tester4)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

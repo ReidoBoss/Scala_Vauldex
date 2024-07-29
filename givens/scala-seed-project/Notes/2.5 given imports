@@ -1,0 +1,61 @@
+2.5 given imports
+
+
+import Printer.{printerln=>println,printer=>print}
+
+class PreferredPrompt(val preference: String)
+class PreferredDrink(val preference: String)
+
+object TomsPrefs:
+	val favoriteColor = "blue"
+	def favoriteFood = "steak"
+
+	given prompt: PreferredPrompt =
+		PreferredPrompt("enjoy> ")
+
+
+	given drink: PreferredDrink =
+		PreferredDrink("red wine")
+
+
+	given prefPromptOrd: Ordering[PreferredPrompt] with
+		def compare(x: PreferredPrompt, y: PreferredPrompt) = x.preference.compareTo(y.preference)
+
+	given prefDrinkOrd: Ordering[PreferredDrink] with
+		def compare(x: PreferredDrink, y: PreferredDrink) = x.preference.compareTo(y.preference)
+
+// imports prompt, drink, prefPromptOrd, and prefDrinkOrd
+// import TomsPrefs.given
+
+
+// imports drink, because it is a given of
+// type PreferredDrink
+// import TomsPrefs.{given PreferredDrink}
+
+// imports prefPromptOrd and prefDrinkOrd
+// import TomsPrefs.{given Ordering[?]}
+
+object Greeter:
+	def greet(name: String)(using prompt: PreferredPrompt, drink: PreferredDrink) =
+		println(s"Welcome, $name. The system is ready.")
+		print("But while you work, ")
+		println(s"why not enjoy a cup of ${drink.preference}?")
+		println(prompt.preference)
+
+@main def stsagarino=
+	//specific given types
+	import TomsPrefs.{prompt,given PreferredDrink}
+	Greeter.greet("Stephen Gwaps")
+
+
+
+
+
+
+
+
+
+
+
+
+
