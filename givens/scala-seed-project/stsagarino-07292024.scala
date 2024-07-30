@@ -1,274 +1,343 @@
-import Printer.{printerln => println, printer => print}
+import Printer.{printerln as println,printer as print}
+// Problem 1: Extension Method for Strings
 
-///------------------------------------------------------------------------------------------------------------------------
-// Problem 1: Extension Method for Summing Elements
-// Create an extension method for a sequence of numbers that calculates the sum of its elements.
-
-// Requirements:
-//   • The extension method should work for any numeric type (e.g., Int, Double).
-//   • Use a given instance to provide the Numeric operations.
-
+// Task: Define an extension method for String that converts it to CamelCase. For example, "hello world" should be converted to "HelloWorld".
 // Hints:
-//   • You can use the Numeric type class provided by Scala.
+//   • Use Scala’s extension methods feature.
+//   • Implement a function that transforms a string into CamelCase.
 
-// Example:
+// extension (s:String) 
+//   def toCamelCase =
+//     s.split(" ").map{x=>x.head.toUpper+x.tail}.mkString
 
-// extension[T](list:Seq[T])
-//   def sumElements(using num:Numeric[T]):T = 
-//     list.sum //Numeric has the implicits
-// //test case
-// @main def stsagarino = 
-//   val list = List(1, 2, 3, 4)
-//   println(list.sumElements) // Output: 10
-
-///------------------------------------------------------------------------------------------------------------------------
-// Problem 2: Extension Method for Finding Maximum Element
-// Create an extension method for a sequence that finds the maximum element based on a given comparison function.
-
-// Requirements:
-//   • The extension method should work for any type.
-//   • Use a given instance to provide the Ordering operations.
-
-// Hints:
-//   • You can use the Ordering type class provided by Scala.
-
-// extension[A](list:List[A])
-//   def maxElement(using ord:Ordering[A]):A=
-//     list.max
-
-// //test case do not change
 // @main def stsagarino =
-//   val list = List(1, 5, 3, 9, 2)
-//   println(list.maxElement) // Output: 9
+//   val str1: String = "hello world"
+//   val str2: String = "scala programming language"
+//   val str3: String = "a b c d"
 
-//   val stringList = List("apple", "banana", "cherry")
-//   println(stringList.maxElement) // Output: cherry
-///------------------------------------------------------------------------------------------------------------------------
+//   println(str1.toCamelCase) // Output: "HelloWorld"
+//   println(str2.toCamelCase) // Output: "ScalaProgrammingLanguage"
+//   println(str3.toCamelCase) // Output: "ABCD"
 
-// Problem 3: Generic Filter Method
+// Problem 2: Generic Extension Method for Lists
 
-// Create an extension method for a sequence that filters elements based on a given predicate.
+// Task: Create an extension method for List that returns the second-to-last element of the list. If the list has fewer than two elements, return None.
 
-// Requirements:
-//   • The extension method should work for any type.
-//   • The method should use a generic type parameter.
+// Hints:
+
+//   • Use Scala’s extension methods with generic types.
+//   • Handle edge cases where the list length is less than 2.
 
 // extension[A](list:List[A])
-//   def filterElements(f:A=>Boolean):List[A]=
-//     list match {
-//       case Nil => Nil
-//       case _ => list.filter(f)
+//   def secondToLast:Option[A]=
+//     (list.length<=1) match {
+//       case (true) => None
+//       case _ => Some(list.init.last)
 //     }
 
-// //test case
-// @main def stsagarino = 
-//   val list = List(1, 2, 3, 4, 5)
-//   println(list.filterElements(_ % 2 == 0)) // Output: List(2, 4)
 
-//   val stringList = List("apple", "banana", "cherry")
-//   println(stringList.filterElements(_.startsWith("b"))) // Output: List("banana
+// @main def stsagarino =
+//   val list1: List[Int] = List(1, 2, 3, 4, 5)
+//   val list2: List[String] = List("a", "b", "c")
+//   val list3: List[Double] = List(3.14)
 
-///------------------------------------------------------------------------------------------------------------------------
+//   println(list1.secondToLast) // Output: Some(4)
+//   println(list2.secondToLast) // Output: Some("b")
+//   println(list3.secondToLast) // Output: None
 
-// Problem 4: Default Value Extension Method
 
-// Create an extension method for an Option that returns the contained value or a default value if the option is None.
+// Problem 3: Default Value with Givens
 
-// Requirements:
-//   • The extension method should work for any type.
-//   • Use a given instance to provide the default value.
+// Task: Define a type class DefaultValue that provides a default value for different types. Implement a given instance for Double and Boolean. Create an extension method that uses the given instance to provide a default value for Option.
 
 // Hints:
-//   • You can define a type class to provide the default value.
-//template:
-// trait DefaultValue[T] {
-//   def default: T
-// }
 
-// object DefaultValue {
-//   given DefaultValue[Int] with {
-//     def default: Int = 0
-//   }
-
-//   given DefaultValue[String] with {
-//     def default: String = ""
-//   }
-// }
+//   • Define a type class DefaultValue with a default method.
+//   • Implement given instances for Double and Boolean.
+//   • Create an extension method for Option that uses the DefaultValue type class.
 
 // Define the type class
 // trait DefaultValue[T] {
 //   def default: T
 // }
 
-// object DefaultValue {
-//   // Given instances for different types
-//   given DefaultValue[Int] with {
-//     def default: Int = 0
-//   }
-
-//   given DefaultValue[String] with {
-//     def default: String = ""
-//   }
-
-//   // Add more given instances for other types if needed
+// object DefaultValue{
+//   given DefaultValue[Int] with 
+//     def default:Int = 0
+//   given DefaultValue[Boolean] with 
+//     def default:Boolean = false
+//   given DefaultValue[Double] with
+//     def default:Double = 0.0
 // }
 
-// // Define the extension method for Option
-// extension [T](opt: Option[T])(using defaultValue: DefaultValue[T]) {
-//     def getOrElseDefault: T = opt.getOrElse(defaultValue.default)
-// }
+// extension[T](opt:Option[T])
+//   def getOrElseDefault(using default:DefaultValue[T]):T=
+//     opt match {
+//       case None => default.default
+//       case Some(a) => a
+//     }
 
 // // Import the extension methods
 
 
-// //test case 
-// @main def stsagarino = 
-//   val optInt: Option[Int] = None
-//   println(optInt.getOrElseDefault) // Output: 0
+// @main def stsagarino =
 
-//   val optString: Option[String] = None
-//   println(optString.getOrElseDefault) // Output: ""
+//   val optDouble: Option[Double] = None
+//   val optBoolean: Option[Boolean] = None
+//   val optDoubleWithValue: Option[Double] = Some(3.14)
+//   val optBooleanWithValue: Option[Boolean] = Some(true)
 
-///------------------------------------------------------------------------------------------------------------------------
+//   // Test cases
+//   assert(optDouble.getOrElseDefault == 0.0) // Default value for Double
+//   assert(optBoolean.getOrElseDefault == false) // Default value for Boolean
+//   assert(optDoubleWithValue.getOrElseDefault == 3.14) // Provided value
+//   assert(optBooleanWithValue.getOrElseDefault == true) // Provided value
 
-// Problem 5: Safe Division Extension Method
+//   println("All tests passed!")
 
-// Create an extension method for Int that performs a safe division, returning None if there is a division by zero.
-// Requirements:
+/* 
+Instructions: 
+  - Make the assertions below pass. Return type annotations are required.
 
-//   • The extension method should return an Option[Int].
-//   • Use a given instance to provide the zero value.
+Submission:
+  1. Create a scala file named <yourid>-07292024.
+  2. <yourid> must be your `<first_name_initial><middle_initial><last_name>. ex. rejima
+  3. Make sure the file you submit is compilable.
+  4. Submit your answer file(s) BEFORE or ON the given time. NO LATE SUBMISSION.
 
-// extension (x:Int)
-//   def safeDiv(y:Int):Option[Int] =
-//     y match {
-//       case 0 => None
-//       case _ => Some(x/y)
-//     }
+#1 Using Scala's `givens` and `using`, complete the implementation for the JsonSerializer
+object which contains the method `toJson`. This method can serialize a `Profile` or a `User` object to a JSON string.
+  - The `toJson` method for a `Profile` returns the following value:
+    "{"id": "${johnProfile.id.toString}","name": "John Doe", "age": 30}"
+  - The `toJson` metho for a `User` returns the following value:
+    "{"email": "${user.email}", "username": "${user.username}", "id_profile": ${user.idProfile}}"
+*/
 
-// //test case
-// @main def stsagarino = 
+// trait JsonSerializable[A]:
+//   def serialize(value: A): String
 
-//   val x = 10
-//   println(x.safeDiv(2)) // Output: Some(5)
-//   println(x.safeDiv(0)) // Output: None
-///------------------------------------------------------------------------------------------------------------------------
+// object JsonSerializable{
+//   given JsonSerializable[Profile] with 
+//     def serialize(prof:Profile)=
+//       s"""{"id": "${prof.id}","name": "${prof.name}", "age": ${prof.age}}"""
+
+//   given JsonSerializable[User] with 
+//     def serialize(user:User)=
+//       s"""{"email": "${user.email}", "username": "${user.username}", "id_profile": ${user.idProfile}}"""
+// }
+
+// class Profile(val id: UUID, val name: String, val age: Int)
+
+// object Profile:
+//   def apply(name: String, age: Int): Profile = new Profile(UUID.randomUUID, name, age)
+
+// case class User(email: String, username: String, idProfile: UUID)
+
+// object JsonSerializer:
+//   def toJson[A](value: A)(using serializer:JsonSerializable[A]): String =
+//     serializer.serialize(value) 
 
 
-// Problem 6: Transform and Filter Extension Method
+// /*
+// #2 Write the code to make the test code below execute successfully.
+//   - Create the necessary classes for the test cases.
+//   - To convert Kilogram to Gram, multiply the value by 1000
+//   - To convert Gram to Kilogram, divide the value by 1000
+//   - Hint: Scala has a built-in feature to easily convert between types
+// */
 
-// Create an extension method for a sequence that transforms elements using a given function and then filters them using another predicate.
+// case class Kilogram(value:Double)
+// case class Gram(value:Double)
 
-// Requirements:
-
-//   • The extension method should work for any type.
-//   • The method should use generic type parameters.
-
-// extension[A](list:List[A])
-//   def transformAndFilter[B](t:A=>B,p:B=>Boolean)=
-//     list.map(t).filter(p)
+// given Conversion[Kilogram,Gram] with
+//   def apply(value:Kilogram):Gram = Gram(value.value*1000) 
+// given Conversion[Gram,Kilogram] with
+//   def apply(value:Gram):Kilogram = Kilogram(value.value/1000) 
 
 
-// // test case
+// // DO NOT CHANGE
+// @main def test =
+//   // 1
+//   val johnProfile = Profile("John Doe", 30)
+//   val johnUser = User("jdoe@gmail.com", "jdoe", johnProfile.id)
 
-// @main def stsagarino= 
-//   val list = List(1, 2, 3, 4, 5)
-//   println(list.transformAndFilter(_ * 2, _ > 5)) // Output: List(6, 8, 10)
+//   val obtainedSerializedProfile = JsonSerializer.toJson(johnProfile)
+//   val expectedSerilizedProfile = s"""{"id": "${johnProfile.id}","name": "John Doe", "age": 30}"""
+//   println(s"obtained: $obtainedSerializedProfile")
+//   println(s"expected: $expectedSerilizedProfile")
+//   assert(obtainedSerializedProfile == expectedSerilizedProfile)
 
-//   val stringList = List("apple", "banana", "cherry")
-//   println(stringList.transformAndFilter(_.toUpperCase, _.startsWith("A"))) // Output: List("APPLE")
+//   val obtainedSerializedUser = JsonSerializer.toJson(johnUser)
+//   val expectedSerilizedUser = s"""{"email": "jdoe@gmail.com", "username": "jdoe", "id_profile": ${johnProfile.id}}"""
+//   println(s"obtained: $obtainedSerializedUser")
+//   println(s"expected: $expectedSerilizedUser")
+//   assert(obtainedSerializedUser == expectedSerilizedUser)
 
-// These problems should help you practice using extension methods, givens, and generic types in Scala.
-///------------------------------------------------------------------------------------------------------------------------
+//   // 2
+//   val testCases1: List[(Kilogram, Gram)] = List(
+//     (Kilogram(1.0), Gram(1000.0)), // (argument value, expected result value)
+//     (Kilogram(1.6), Gram(1600.0)),
+//     (Kilogram(2.89), Gram(2890.0))
+//   )
 
-// Sure, here’s a comprehensive problem that combines extension methods, givens, and generic types in Scala:
+//   val testCases2: List[(Gram, Kilogram)] = List(
+//     (Gram(100.0), Kilogram(0.1)), // (argument value, expected result value)
+//     (Gram(3.0), Kilogram(0.003)),
+//     (Gram(19.8), Kilogram(0.0198))
+//   )
+  
+//   testCases1.foreach(t => {
+//     val obtained: Gram = t._1
+//     val expected = t._2
+//     println(s"obtained: $obtained")
+//     println(s"expected: $expected")
+//     assert(obtained == expected)
+//   })
 
-// Problem: Advanced Collection Operations
+//   testCases2.foreach(t => {
+//     val obtained: Kilogram = t._1
+//     val expected = t._2
+//     println(s"obtained: $obtained")
+//     println(s"expected: $expected")
+//     assert(obtained == expected)
+//   })
 
-// Create a suite of extension methods for a custom collection class, MyCollection[T], that performs various advanced operations. The methods should include:
 
-//   1.  Sum of Elements: Sum the elements of the collection if they are numeric.
-//   2.  Find Maximum Element: Find the maximum element based on a given ordering.
-//   3.  Transform and Filter: Transform the elements using a given function and filter them based on another predicate.
-//   4.  Safe Division: Perform a safe division operation on each element by a given divisor, returning None if division by zero occurs.
 
-// Requirements:
+// Problem 4: Generic Sorting
 
-//   • Use extension methods to add these functionalities.
-//   • Use given instances to provide the necessary numeric and ordering operations.
-//   • Implement the methods in a generic manner to work with different types.
-
+// Task: Create a generic extension method for Seq that sorts the sequence using a custom ordering function. The custom ordering function should be provided as an implicit parameter.
 // Hints:
-
-//   • Use the Numeric type class for summing elements.
-//   • Use the Ordering type class for finding the maximum element.
-//   • Define a type class to provide a default value for safe division.
+//   • Use an extension method with generic types.
+//   • Define a custom ordering function as an implicit parameter.
 
 
-// Define the custom collection class
-case class MyCollection[T](elements: Seq[T])
 
-// Define the type class for providing a default value
-trait DefaultValue[T] {
-  def default: T
-}
+// // Test Cases:
+// @main def stsagarino =
+// implicit val intOrdering: Ordering[Int] = Ordering[Int]
 
-object DefaultValue {
-  given DefaultValue[Int] with {
-    def default: Int = 0
-  }
+// val list1: Seq[Int] = Seq(3, 1, 4, 1, 5, 9, 2, 6, 5)
+// val list2: Seq[String] = Seq("apple", "banana", "cherry")
 
-  given DefaultValue[String] with {
-    def default: String = ""
-  }
-}
+// println(list1.customSort) // Output: Seq(1, 1, 2, 3, 4, 5, 5, 6, 9)
+// println(list2.customSort) // Output: Seq("apple", "banana", "cherry")
 
-// Extension methods for MyCollection
-extension [T](col: MyCollection[T]) {
-  def sumElements(using num: Numeric[T]): T = {
-    col.elements.sum
-  }
 
-  def maxElement(using ord: Ordering[T]): Option[T] = {
-    if (col.elements.isEmpty) None
-    else Some(col.elements.max)
-  }
+//4
+// @main def stsagarino =
 
-  def transformAndFilter[B](transform: T => B, predicate: B => Boolean): MyCollection[B] = {
-    MyCollection(col.elements.map(transform).filter(predicate))
-  }
+//   extension(s:String)
+//     def truncate(n:Int)=
+//       s.zipWithIndex.map((x,y)=>if(y<=10)"."else if(y>=10)""else x)
 
-  def safeDiv(divisor: T)(using num: Numeric[T], default: DefaultValue[Option[T]]): MyCollection[Option[T]] = {
-    import num._
-    if (divisor == zero) MyCollection(col.elements.map(_ => None))
-    else MyCollection(col.elements.map(e => Some(e / divisor)))
-  }
-}
 
-// Main method to test the functionality
-@main def testMyCollection = {
-  val intCollection = MyCollection(List(1, 2, 3, 4, 5))
-  val stringCollection = MyCollection(List("apple", "banana", "cherry"))
+//   assert("Lorem ipsum dolor sit amet, consectetur adipiscing elit.".truncate(10) == "Lorem ipsu...")
 
-  println(intCollection.sumElements) // Output: 15
-  println(intCollection.maxElement) // Output: Some(5)
-  println(intCollection.transformAndFilter(_ * 2, _ > 5)) // Output: MyCollection(List(6, 8, 10))
-  println(intCollection.safeDiv(2)) // Output: MyCollection(List(Some(0), Some(1), Some(1), Some(2), Some(2)))
-//   println(intCollection.safeDiv(0)) // Output: MyCollection(List(None, None, None, None, None))
+import java.util.UUID
+/* 
+Instructions: 
+  - Make the assertions below pass. Return type annotations are required.
 
-//   println(stringCollection.transformAndFilter(_.toUpperCase, _.startsWith("A"))) // Output: MyCollection(List("APPLE"))
-//
-}
+Submission:
+  1. Create a scala file named <yourid>-07292024.
+  2. <yourid> must be your `<first_name_initial><middle_initial><last_name>. ex. rejima
+  3. Make sure the file you submit is compilable.
+  4. Submit your answer file(s) BEFORE or ON the given time. NO LATE SUBMISSION.
 
-// Explanation:
+#1 Using Scala's `givens` and `using`, complete the implementation for the JsonSerializer
+object which contains the method `toJson`. This method can serialize a `Profile` or a `User` object to a JSON string.
+  - The `toJson` method for a `Profile` returns the following value:
+    "{"id": "${johnProfile.id.toString}","name": "John Doe", "age": 30}"
+  - The `toJson` metho for a `User` returns the following value:
+    "{"email": "${user.email}", "username": "${user.username}", "id_profile": ${user.idProfile}}"
+*/
 
-//   1.  Custom Collection Class: MyCollection[T] wraps a sequence of elements.
-//   2.  Type Class for Default Value: DefaultValue[T] provides a default value for safe division.
-//   3.  Extension Methods: The extension methods add functionalities to MyCollection[T]:
-//   • sumElements sums the elements if they are numeric.
-//   • maxElement finds the maximum element based on a given ordering.
-//   • transformAndFilter transforms and filters elements based on given functions.
-//   • safeDiv performs safe division on elements, returning None if division by zero occurs.
-//   4.  Main Method: Tests the functionalities with examples.
+trait JsonSerializable[A]:
+  def serialize(value: A): String
 
-// This problem should give you a comprehensive practice on using extension methods, givens, and generic types in Scala.
+object JsonSerializable:
+  given JsonSerializable[Profile] with
+    def serialize(value:Profile):String = 
+      s"""{"id": "${value.id}","name": "${value.name}", "age": ${value.age}}"""
+  given JsonSerializable[User] with
+    def serialize(value:User):String = 
+      s"""{"email": "${value.email}", "username": "${value.username}", "id_profile": ${value.idProfile}}"""
+
+class Profile(val id: UUID, val name: String, val age: Int)
+
+object Profile:
+  def apply(name: String, age: Int): Profile = new Profile(UUID.randomUUID, name, age)
+
+case class User(email: String, username: String, idProfile: UUID)
+
+object JsonSerializer:
+  def toJson[A](value: A)(using serializer:JsonSerializable[A]): String = 
+    serializer.serialize(value)
+
+
+/*
+#2 Write the code to make the test code below execute successfully.
+  - Create the necessary classes for the test cases.
+  - To convert Kilogram to Gram, multiply the value by 1000
+  - To convert Gram to Kilogram, divide the value by 1000
+  - Hint: Scala has a built-in feature to easily convert between types
+*/
+case class Gram(value:Double)
+case class Kilogram(value:Double)
+
+given Conversion[Kilogram,Gram] with
+  def apply(k:Kilogram) = Gram(k.value*1000)
+given Conversion[Gram,Kilogram] with
+  def apply(k:Gram) = Kilogram(k.value/1000)
+
+// DO NOT CHANGE
+@main def stsagarino =
+  // 1
+  val johnProfile = Profile("John Doe", 30)
+  val johnUser = User("jdoe@gmail.com", "jdoe", johnProfile.id)
+
+  val obtainedSerializedProfile = JsonSerializer.toJson(johnProfile)
+  val expectedSerilizedProfile = s"""{"id": "${johnProfile.id}","name": "John Doe", "age": 30}"""
+  println(s"obtained: $obtainedSerializedProfile")
+  println(s"expected: $expectedSerilizedProfile")
+  assert(obtainedSerializedProfile == expectedSerilizedProfile)
+
+  val obtainedSerializedUser = JsonSerializer.toJson(johnUser)
+  val expectedSerilizedUser = s"""{"email": "jdoe@gmail.com", "username": "jdoe", "id_profile": ${johnProfile.id}}"""
+  println(s"obtained: $obtainedSerializedUser")
+  println(s"expected: $expectedSerilizedUser")
+  assert(obtainedSerializedUser == expectedSerilizedUser)
+
+  // 2
+  val testCases1: List[(Kilogram, Gram)] = List(
+    (Kilogram(1.0), Gram(1000.0)), // (argument value, expected result value)
+    (Kilogram(1.6), Gram(1600.0)),
+    (Kilogram(2.89), Gram(2890.0))
+  )
+
+  val testCases2: List[(Gram, Kilogram)] = List(
+    (Gram(100.0), Kilogram(0.1)), // (argument value, expected result value)
+    (Gram(3.0), Kilogram(0.003)),
+    (Gram(19.8), Kilogram(0.0198))
+  )
+  
+  testCases1.foreach(t => {
+    val obtained: Gram = t._1
+    val expected = t._2
+    println(s"obtained: $obtained")
+    println(s"expected: $expected")
+    assert(obtained == expected)
+  })
+
+  testCases2.foreach(t => {
+    val obtained: Kilogram = t._1
+    val expected = t._2
+    println(s"obtained: $obtained")
+    println(s"expected: $expected")
+    assert(obtained == expected)
+  })
+
+
+
+
