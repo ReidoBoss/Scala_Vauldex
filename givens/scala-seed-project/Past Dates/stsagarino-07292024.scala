@@ -57,43 +57,43 @@ import Printer.{printerln as println,printer as print}
 //   • Create an extension method for Option that uses the DefaultValue type class.
 
 // Define the type class
-// trait DefaultValue[T] {
-//   def default: T
-// }
+trait DefaultValue[T] {
+  def default: T
+}
 
-// object DefaultValue{
-//   given DefaultValue[Int] with 
-//     def default:Int = 0
-//   given DefaultValue[Boolean] with 
-//     def default:Boolean = false
-//   given DefaultValue[Double] with
-//     def default:Double = 0.0
-// }
+object DefaultValue{
+  given DefaultValue[Int] with 
+    def default:Int = 0
+  given DefaultValue[Boolean] with 
+    def default:Boolean = false
+  given DefaultValue[Double] with
+    def default:Double = 0.0
+}
 
-// extension[T](opt:Option[T])
-//   def getOrElseDefault(using default:DefaultValue[T]):T=
-//     opt match {
-//       case None => default.default
-//       case Some(a) => a
-//     }
+extension[T](opt:Option[T])
+  def getOrElseDefault(using default:DefaultValue[T]):T=
+    opt match {
+      case None => default.default
+      case Some(a) => a
+    }
 
 // // Import the extension methods
 
 
-// @main def stsagarino =
+@main def stsagarino =
 
-//   val optDouble: Option[Double] = None
-//   val optBoolean: Option[Boolean] = None
-//   val optDoubleWithValue: Option[Double] = Some(3.14)
-//   val optBooleanWithValue: Option[Boolean] = Some(true)
+  val optDouble: Option[Double] = None
+  val optBoolean: Option[Boolean] = None
+  val optDoubleWithValue: Option[Double] = Some(3.14)
+  val optBooleanWithValue: Option[Boolean] = Some(true)
 
-//   // Test cases
-//   assert(optDouble.getOrElseDefault == 0.0) // Default value for Double
-//   assert(optBoolean.getOrElseDefault == false) // Default value for Boolean
-//   assert(optDoubleWithValue.getOrElseDefault == 3.14) // Provided value
-//   assert(optBooleanWithValue.getOrElseDefault == true) // Provided value
+  // Test cases
+  assert(optDouble.getOrElseDefault == 0.0) // Default value for Double
+  assert(optBoolean.getOrElseDefault == false) // Default value for Boolean
+  assert(optDoubleWithValue.getOrElseDefault == 3.14) // Provided value
+  assert(optBooleanWithValue.getOrElseDefault == true) // Provided value
 
-//   println("All tests passed!")
+  println("All tests passed!")
 
 /* 
 Instructions: 

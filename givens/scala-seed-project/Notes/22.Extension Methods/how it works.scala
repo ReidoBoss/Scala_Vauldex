@@ -101,6 +101,31 @@ extension [T](ss: Seq[T])
 //   println(Nil)
 
 
+//---------Tail Option----------
+
+import Printer.{printerln => println, printer => print}
+
+
+extension [T](xs: List[T])
+   def tailOption: Option[List[T]] =
+    if xs.nonEmpty then Some(xs.tail) else None
+
+
+@main def stsagarino = 
+  
+  val list = List()
+  println(tailOption[Int](List(1,2,4,5)))
+  println(list.tailOption.getOrElse("0"))
+
+
+
+
+
+
+
+
+
+
 
 
 
