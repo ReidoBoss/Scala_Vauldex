@@ -3,3 +3,4 @@ package Printer:
 		println(Console.YELLOW+"\n"+s+"\n"+Console.RESET)
 	def printer(s:Any) =
 		print(Console.YELLOW+s+Console.RESET)
+
