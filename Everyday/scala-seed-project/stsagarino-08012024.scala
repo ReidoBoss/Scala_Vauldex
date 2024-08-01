@@ -12,31 +12,12 @@ and instances of the type class for Int, String, Boolean and List.
 */
 
 
-
-trait Eq[T]:
-	def equ(a:T,b:T):Boolean
-
-object Eq:
-	given Eq[Int] with 
-		def equ(a:Int,b:Int):Boolean =
-			a==b
-	
-	def apply[A](using eq:Eq[A]) = eq
-
-extension[A](value:A) 
-	def equ(value2:A)(using equalizer: Eq[A]):Boolean=
-		equalizer.equ(value,value2)
-
-//------------------------------------------------------------------------------------------------------------------
 trait Show[T]:
 	def shower(value:T):String
 
 object Show:
 	given Show[Int] with 
 		def shower(value:Int):String = value.toString
-
-	// given [A]:Show[List[A]] with
-	// 	def show(a:List[A]) = a.mkString("[", ", ", "]")
 
 	given [A]: Show[List[A]] with
 		def shower(x:List[A]):String = s"[${x.mkString(", ")}]"
@@ -46,6 +27,29 @@ object Show:
 
 extension [T](s:Show[T]) (using shower:Show[T]) 
 	def show(value:T):String = shower.shower(value).toString
+
+
+
+//------------------------------------------------------------------------------------------------------------------
+
+trait Eq[T]:
+	def equ(a:T,b:T):Boolean
+
+object Eq:
+
+	def apply[A](using eq:Eq[A]) = eq
+
+given Eq[Int] with 
+	def equ(a:Int,b:Int):Boolean =
+		a==b
+
+given [A]:Eq[List[A]] with 
+	def equ(list1:List[A],list2:List[A]):Boolean =
+		list1==list2
+
+extension[A](value:A) 
+	def eq(value2:A)(using equalizer: Eq[A]):Boolean=
+		equalizer.equ(value,value2)
 
 //-----------------------------------------------------------------------------------------------------------------
 
@@ -66,15 +70,15 @@ extension [T](s:Show[T]) (using shower:Show[T])
   assert(showList2 == "[1, 2, 3]")
 
   // // 2
-  val eqInt1 = Eq[Int].equ(123, 123)
+  val eqInt1 = Eq[Int].eq(123, 123)
   assert(eqInt1 == true)
 
-  // val eqList1 = Eq[List[Int]].eq(List(1, 2, 3), List(1, 2, 3))
-  // assert(eqList1 == true)
+  val eqList1 = Eq[List[Int]].eq(List(1, 2, 3), List(1, 2, 3))
+  assert(eqList1 == true)
 
-  val eqInt2 = summon[Eq[Int]].equ(123, 123)
+  val eqInt2 = summon[Eq[Int]].eq(123, 123)
   assert(eqInt2 == true)
 
-  // val eqList2 = summon[Eq[List[Int]]].eq(List(1, 2, 3), List(1, 2, 3))
-  // assert(eqList2 == true)
+  val eqList2 = summon[Eq[List[Int]]].eq(List(1, 2, 3), List(1, 2, 3))
+  assert(eqList2 == true)
 /* DO NOT CHANGE */
