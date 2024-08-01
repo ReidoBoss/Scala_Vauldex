@@ -1,0 +1,40 @@
+sealed trait MyList[+A] {
+  def head: A
+  def tail: MyList[A]
+  def isEmpty: Boolean
+  def prepend[B >: A](elem: B): MyList[B]
+  override def toString: String
+}
+
+case object Empty extends MyList[Nothing] {
+  def head: Nothing = throw new NoSuchElementException("head of empty list")
+  def tail: MyList[Nothing] = throw new UnsupportedOperationException("tail of empty list")
+  def isEmpty: Boolean = true
+  def prepend[B >: Nothing](elem: B): MyList[B] = Cons(elem, Empty)
+  override def toString: String = "Empty"
+}
+
+case class Cons[+A](head: A, tail: MyList[A]) extends MyList[A] {
+  def isEmpty: Boolean = false
+  def prepend[B >: A](elem: B): MyList[B] = Cons(elem, this)
+  override def toString: String = s"$head -> ${tail.toString}"
+}
+
+
+object MyListTest extends App {
+  val emptyList: MyList[Int] = Empty
+  val singleElementList: MyList[Int] = Cons(1, Empty)
+  val multipleElementsList: MyList[Int] = Cons(1, Cons(2, Cons(3, Empty)))
+
+  println(emptyList)                      // Output: Empty
+  println(singleElementList)              // Output: 1 -> Empty
+  println(multipleElementsList)           // Output: 1 -> 2 -> 3 -> Empty
+
+  println(multipleElementsList.head)      // Output: 1
+  println(multipleElementsList.tail)      // Output: 2 -> 3 -> Empty
+  println(multipleElementsList.isEmpty)   // Output: false
+  println(emptyList.isEmpty)              // Output: true
+
+  val newList = multipleElementsList.prepend(0)
+  println(newList)                        // Output: 0 -> 1 -> 2 -> 3 -> Empty
+}
