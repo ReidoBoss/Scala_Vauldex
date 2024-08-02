@@ -12,45 +12,39 @@ and instances of the type class for Int, String, Boolean and List.
 */
 
 
+
 trait Show[T]:
-	def shower(value:T):String
+	def show(value:T):String
 
 object Show:
-	given Show[Int] with 
-		def shower(value:Int):String = value.toString
-
-	given [A]: Show[List[A]] with
-		def shower(x:List[A]):String = s"[${x.mkString(", ")}]"
-
 	def apply[A](using show:Show[A]) = show
-	// def apply[A: Show] = summon[Show[A]] -- context bound
 
-extension [T](s:Show[T]) (using shower:Show[T]) 
-	def show(value:T):String = shower.shower(value).toString
+	given Show[Int] with 
+		def show(value:Int):String =
+			value.toString
+	given [A]:Show[List[A]] with
+		def show(value:List[A]):String =
+			s"[${value.mkString(", ")}]"
 
+extension[T](sh:Show[T]) (using shower:Show[T])
+	def show(i:T):String=
+		shower.show(i)
 
 
 //------------------------------------------------------------------------------------------------------------------
-
 trait Eq[T]:
-	def equ(a:T,b:T):Boolean
-
+	def eq(a:T,b:T):Boolean
 object Eq:
+	def apply[T](using equalizer:Eq[T])= equalizer
+	given Eq[Int] with 
+		def eq(a:Int,b:Int):Boolean = a==b 
+	given [A]:Eq[List[A]] with
+		def eq(a:List[A],b:List[A]) = a==b
 
-	def apply[A](using eq:Eq[A]) = eq
-
-given Eq[Int] with 
-	def equ(a:Int,b:Int):Boolean =
-		a==b
-
-given [A]:Eq[List[A]] with 
-	def equ(list1:List[A],list2:List[A]):Boolean =
-		list1==list2
-
-extension[A](value:A) 
-	def eq(value2:A)(using equalizer: Eq[A]):Boolean=
-		equalizer.equ(value,value2)
-
+extension (value:Eq[Int])(using equalizer:Eq[Int])
+	def eq(a:Int,b:Int) = equalizer.eq(a,b)
+extension[A](value:Eq[List[A]])(using equalizer:Eq[List[A]])
+	def eq(a:List[A],b:List[A]) = equalizer.eq(a,b)	
 //-----------------------------------------------------------------------------------------------------------------
 
 @main def stsagarino =
@@ -69,7 +63,7 @@ extension[A](value:A)
   val showList2 = summon[Show[List[Int]]].show(List(1, 2, 3))
   assert(showList2 == "[1, 2, 3]")
 
-  // // 2
+  // 2
   val eqInt1 = Eq[Int].eq(123, 123)
   assert(eqInt1 == true)
 

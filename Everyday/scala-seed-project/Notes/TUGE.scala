@@ -126,7 +126,7 @@ trait Show[A] {
   def show(a: A): String
 }
 @main def stsagarino =
-  implicit val intShow: Show[Int] = new Show[Int] {
+  given Show[Int] = new Show[Int] {
     def show(a: Int): String = a.toString
   }
 
